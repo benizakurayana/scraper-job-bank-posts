@@ -94,49 +94,48 @@ def scrape(soup, f):
     """
     # Job info is in article tags with this class
     jobs = soup.find_all("article", class_="b-block--top-bord job-list-item b-clearfix js-job-item")
-    # ID for each job on a page (normally 20 jobs on one page)
-    index = 0
+    d = {}
     # Iterate through all jobs in a page
     for job in jobs:
-        index += 1
         # Get the items in different html tags and classes
-        job_link = job.find("a", {"data-qa-id": "jobSeachResultTitle"})["href"]
-        job_title = job.find("a", {"data-qa-id": "jobSeachResultTitle"}).text.strip()
-        job_company = job["data-cust-name"].strip().replace("\t","")
-        job_industry = job["data-indcat-desc"].strip()
-        job_update = job.find("span", class_="b-tit__date").text.strip()
-        job_location = job.select('ul.b-list-inline.b-clearfix.job-list-intro.b-content > li')[0].text.strip()
-        job_exp = job.select('ul.b-list-inline.b-clearfix.job-list-intro.b-content > li')[1].text.strip()
-        job_edu = job.select('ul.b-list-inline.b-clearfix.job-list-intro.b-content > li')[2].text.strip()
+        d['job_id'] = job['data-job-no']
+        d['link'] = job.find("a", {"data-qa-id": "jobSeachResultTitle"})["href"]
+        d['title'] = job.find("a", {"data-qa-id": "jobSeachResultTitle"}).text.strip()
+        d['company'] = job["data-cust-name"].strip().replace("\t","")
+        d['industry'] = job["data-indcat-desc"].strip()
+        # d['update'] = job.find("span", class_="b-tit__date").text.strip()
+        d['location'] = job.select('ul.b-list-inline.b-clearfix.job-list-intro.b-content > li')[0].text.strip()
+        # d['exp'] = job.select('ul.b-list-inline.b-clearfix.job-list-intro.b-content > li')[1].text.strip()
+        # d['edu'] = job.select('ul.b-list-inline.b-clearfix.job-list-intro.b-content > li')[2].text.strip()
         if job.find("p", class_="job-list-item__info b-clearfix b-content"):
-            job_brief = job.find("p", class_="job-list-item__info b-clearfix b-content").text.strip().replace("\t","").replace("\n","").replace("\r","").replace("\r\n","")
+            d['brief'] = job.find("p", class_="job-list-item__info b-clearfix b-content").text.strip().replace("\t","").replace("\n","").replace("\r","").replace("\r\n","")
         else:
-            job_brief = "NONE"
-        job_applicants = job.find("a", class_="b-link--gray gtm-list-apply").text
+            d['brief'] = "NONE"
+        # job_applicants = job.find("a", class_="b-link--gray gtm-list-apply").text
         # These items hide in these divs with this class
         job_tag_sec = job.find("div", class_="job-list-tag b-content")
-        job_tags_salary = ""
-        job_tags_tse_otc = ""
-        job_tags_fc = ""
-        job_tags_emp = ""
-        job_tags_remote = ""
-        job_tags_metro = ""
+        d['salary'] = ""
+        d['tse_otc'] = ""
+        d['fc'] = ""
+        d['emp'] = ""
+        d['remote'] = ""
+        d['metro'] = ""
         for child in job_tag_sec.children:
-            if child != ' ':
+            if child != " ":
                 if "薪" in child.text or "待遇面議" in child.text:
-                    job_tags_salary = child.text
+                    d['salary'] = child.text
                 elif "上市上櫃" in child.text:
-                    job_tags_tse_otc = child.text
+                    d['tse_otc'] = child.text
                 elif "外商" in child.text:
-                    job_tags_fc = child.text
+                    d['fc'] = child.text
                 elif "員工" in child.text:
-                    job_tags_emp = child.text
+                    d['emp'] = child.text
                 elif "遠端工作" in child.text:
-                    job_tags_remote = child.text
+                    d['remote'] = child.text
                 elif "距捷運" in child.text:
-                    job_tags_metro = child.text
+                    d['metro'] = child.text
         # Write the items scraped to file
-        f.write(f'{index}\t{job_link}\t{job_title}\t{job_company}\t{job_industry}\t{job_update}\t{job_location}\t'
+        f.write(f'{job_link}\t{job_title}\t{job_company}\t{job_industry}\t{job_update}\t{job_location}\t'
                 f'{job_exp}\t{job_edu}\t{job_brief}\t{job_applicants}\t{job_tags_salary}\t{job_tags_tse_otc}\t'
                 f'{job_tags_fc}\t{job_tags_emp}\t{job_tags_remote}\t{job_tags_metro}\n')
     # Print scraping status
