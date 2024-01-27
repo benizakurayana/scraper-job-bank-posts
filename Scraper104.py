@@ -15,12 +15,10 @@ class Scraper104:
             listing_req = Req104(listing_type, search_keyword_or_job_id)
         else:
             listing_req = Req104(listing_type)
-        url = listing_req.url
-        headers = listing_req.headers.get_req_headers_dict()
 
         while page_num <= last_page:
-            current_url = url + str(page_num)
-            response = requests.get(current_url, headers=headers)
+            current_url = listing_req.url + str(page_num)
+            response = requests.get(current_url, headers=listing_req.headers)
             response_data = response.json()
 
             if listing_type == "applyRecord":
@@ -39,7 +37,6 @@ class Scraper104:
                 else:
                     job_list += response_data['data']['list']
 
-
             page_num += 1
 
         for item in job_list:
@@ -50,18 +47,14 @@ class Scraper104:
             elif listing_type == "similarJobs":
                 job_id_list.append(item['link']['job'].split('/')[-1].split('?')[0])
 
-
         # print(len(job_list))
         # print(len(job_id_list))
         return job_id_list
 
     @staticmethod
     def scrape_one(job_id):
-        req = Req104("job")
-        url = req.url + job_id
-        req.headers.referer + job_id
-        headers = req.headers.get_req_headers_dict()
-        response = requests.get(url, headers=headers)
+        req = Req104("job", search_keyword_or_job_id=job_id)
+        response = requests.get(req.url, headers=req.headers)
         response_data = response.json()
 
         return response_data['data']
@@ -76,23 +69,23 @@ if __name__ == "__main__":
     #     job = scraper.scrape_one(item)
     #     applied_job_list.append(job)
 
-    search_job_id_list = scraper.scrape_listing("search", "java")
-    search_job_list = []
-    for item in search_job_id_list:
-        job = scraper.scrape_one(item)
-        search_job_list.append(job)
-
-    # similar_job_id_list = scraper.scrape_listing("similarJobs", "7zz8h")
-    # similar_job_list = []
-    # for item in similar_job_id_list:
+    # search_job_id_list = scraper.scrape_listing("search", "java")
+    # search_job_list = []
+    # for item in search_job_id_list:
     #     job = scraper.scrape_one(item)
-    #     similar_job_list.append(job)
+    #     search_job_list.append(job)
+
+    similar_job_id_list = scraper.scrape_listing("similarJobs", "7zz8h")
+    similar_job_list = []
+    for item in similar_job_id_list:
+        job = scraper.scrape_one(item)
+        similar_job_list.append(job)
 
     # Convert JSON to DataFrame
-    df = pd.json_normalize(search_job_list)
+    df = pd.json_normalize(similar_job_list)
 
     # Save DataFrame to Excel
-    writer = pd.ExcelWriter('output/search_job_list.xlsx', engine='xlsxwriter')
+    writer = pd.ExcelWriter('output/similar_job_list.xlsx', engine='xlsxwriter')
     df.to_excel(writer, index=False)
     writer.save()
     
