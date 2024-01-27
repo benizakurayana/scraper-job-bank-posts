@@ -22,7 +22,7 @@ def main():
     url_suffix = "&mode=s&jobsource=2018indexpoc&langFlag=0&langStatus=0&recommendJob=1&hotJob=1"
     page_num = 1
     # Open txt file and write column titles
-    with open("output/posts.txt", 'w', encoding="utf-8") as f:
+    with open("posts.txt", 'w', encoding="utf-8") as f:
         f.write("index\tjob_link\tjob_title\tjob_company\tjob_industry\tjob_update\tjob_location\tjob_exp\tjob_edu\t"
                 "job_brief\tjob_applicants\tjob_tags_salary\tjob_tags_tse_otc\tjob_tags_fc\tjob_tags_emp\t"
                 "job_tags_remote\tjob_tags_metro\n")
