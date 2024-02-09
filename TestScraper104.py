@@ -3,6 +3,15 @@ from Scraper104 import Scraper104
 
 
 class TestScraper104:
+    """
+    This class contains test methods for Scraper104 and PersistenceExcel functionality and demonstrates saving scraped
+    job details to Excel.
+
+    Dependencies:
+        - Requires the 'Scraper104' class for scraping job details.
+        - Requires the 'PersistenceExcel' class for saving job details to an Excel file.
+    """
+
     @staticmethod
     def test_similar_job_save_to_excel():
         # Scrape
@@ -41,6 +50,6 @@ class TestScraper104:
 
 
 if __name__ == "__main__":
-    # TestScraper104.test_similar_job_save_to_excel()
+    TestScraper104.test_similar_job_save_to_excel()
     TestScraper104.test_applied_job_save_to_excel()
-    # TestScraper104.test_search_job_save_to_excel()
+    TestScraper104.test_search_job_save_to_excel()

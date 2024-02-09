@@ -3,13 +3,45 @@ from Req104 import Req104
 
 
 class Scraper104:
+    """
+    This class provides methods to scrape job listings and details from 104 Job Bank using AJAX GET requests.
+
+    Attributes:
+        None
+
+    Note:
+       - The 'listing_type' parameter in 'scrape_listing' can be one of: "applyRecord", "search", or "similarJobs".
+       - For "applyRecord", it retrieves a 104 Job Bank member's list of applied jobs.
+       - For "search", it retrieves results based on a given search criteria.
+       - For "similarJobs", it retrieves results of jobs similar to a given job.
+
+    Dependencies:
+       - Requires the 'Req104' class for handling the configuration of AJAX GET requests.
+    """
 
     @staticmethod
     def scrape_listing(listing_type, search_keyword_or_job_id=None):
+        """
+        Scrapes job listings based on the specified listing type and optional search keyword or job ID.
+
+        Parameters:
+            listing_type (str): Type of job listing to scrape ("applyRecord", "search", or "similarJobs").
+            search_keyword_or_job_id (str, optional): Search keyword or specific job ID. Default is None.
+
+        Returns:
+            list: List of job IDs.
+
+        Note:
+            - The returned job IDs can be used to fetch detailed information about each job using 'scrape_one' method.
+
+        """
+
         job_list = []
         job_id_list = []
         last_page = 1
         page_num = 1
+
+        # Configure request based on listing type
         if listing_type == "search" or listing_type == "similarJobs":
             listing_req = Req104(listing_type, search_keyword_or_job_id)
         else:
@@ -52,6 +84,15 @@ class Scraper104:
 
     @staticmethod
     def scrape_one(job_id):
+        """
+        Scrapes details for a specific job ID.
+
+        Parameters:
+            job_id (str): The unique identifier of the job.
+
+        Returns:
+            dict: Details of the job.
+        """
         req = Req104("job", search_keyword_or_job_id=job_id)
         response = requests.get(req.url, headers=req.headers)
         response_data = response.json()
