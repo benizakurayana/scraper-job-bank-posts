@@ -1,6 +1,5 @@
 import requests
 from Req104 import Req104
-import pandas as pd
 
 
 class Scraper104:
@@ -58,34 +57,3 @@ class Scraper104:
         response_data = response.json()
 
         return response_data['data']
-
-
-if __name__ == "__main__":
-    scraper = Scraper104()
-
-    # applied_job_id_list = scraper.scrape_listing("applyRecord")
-    # applied_job_list = []
-    # for item in applied_job_id_list:
-    #     job = scraper.scrape_one(item)
-    #     applied_job_list.append(job)
-
-    # search_job_id_list = scraper.scrape_listing("search", "java")
-    # search_job_list = []
-    # for item in search_job_id_list:
-    #     job = scraper.scrape_one(item)
-    #     search_job_list.append(job)
-
-    similar_job_id_list = scraper.scrape_listing("similarJobs", "7zz8h")
-    similar_job_list = []
-    for item in similar_job_id_list:
-        job = scraper.scrape_one(item)
-        similar_job_list.append(job)
-
-    # Convert JSON to DataFrame
-    df = pd.json_normalize(similar_job_list)
-
-    # Save DataFrame to Excel
-    writer = pd.ExcelWriter('output/similar_job_list.xlsx', engine='xlsxwriter')
-    df.to_excel(writer, index=False)
-    writer.save()
-    
