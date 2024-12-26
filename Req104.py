@@ -53,5 +53,11 @@ class Req104:
         elif req_type == "job":
             self.url = f'https://www.104.com.tw/job/ajax/content/{search_keyword_or_job_id}'
             self.headers["Referer"] = f'https://www.104.com.tw/job/{search_keyword_or_job_id}'
+        elif req_type == "searchProfile":
+            self.url = f'https://api.profile.104.com.tw/profiles?kw={search_keyword_or_job_id}&pageSize=100&sort=recommend&page='
+            self.headers["Referer"] = 'https://profile.104.com.tw/'
+        elif req_type == "profile":
+            self.url = f'https://api.profile.104.com.tw/profiles/{search_keyword_or_job_id}'
+            self.headers["Referer"] = 'https://profile.104.com.tw/'
         else:
             print("Incorrect listing_type")

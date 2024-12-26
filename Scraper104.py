@@ -42,7 +42,7 @@ class Scraper104:
         page_num = 1
 
         # Configure request based on listing type
-        if listing_type == "search" or listing_type == "similarJobs":
+        if listing_type == "search" or listing_type == "similarJobs" or listing_type == 'searchProfile':
             listing_req = Req104(listing_type, search_keyword_or_job_id)
         else:
             listing_req = Req104(listing_type)
@@ -59,7 +59,6 @@ class Scraper104:
                     job_list = response_data['data']
                 else:
                     job_list += response_data['data']
-
             elif listing_type == "search" or listing_type == "similarJobs":
                 if page_num == 1:
                     # Find out total page number in the first loop
@@ -67,6 +66,15 @@ class Scraper104:
                     job_list = response_data['data']['list']
                 else:
                     job_list += response_data['data']['list']
+            elif listing_type == listing_type == 'searchProfile':
+                if page_num == 1:
+                    # Find out total page number in the first loop
+                    last_page = response_data['metadata']['pagination']['lastPage']
+                    for item in response_data['data']:
+                        job_id_list.append(item['key'])
+                else:
+                    for item in response_data['data']:
+                        job_id_list.append(item['key'])
 
             page_num += 1
 
@@ -77,9 +85,11 @@ class Scraper104:
                 job_id_list.append(item['link']['job'].split('/')[-1].split('?')[0])
             elif listing_type == "similarJobs":
                 job_id_list.append(item['link']['job'].split('/')[-1].split('?')[0])
+            elif listing_type == "searchProfile":
+                job_id_list.append(item[0]['key'])
 
-        # print(len(job_list))
-        # print(len(job_id_list))
+        print(len(job_list))
+        print(len(job_id_list))
         return job_id_list
 
     @staticmethod
@@ -97,4 +107,23 @@ class Scraper104:
         response = requests.get(req.url, headers=req.headers)
         response_data = response.json()
 
+        return response_data['data']
+
+    @staticmethod
+    def scrape_one_profile(profile_id):
+        """
+        Scrapes details for a specific profile ID.
+
+        Parameters:
+            profile_id (str): The unique identifier of the profile.
+
+        Returns:
+            dict: Details of the profile.
+        """
+        req = Req104("profile", search_keyword_or_job_id=profile_id)
+        response = requests.get(req.url, headers=req.headers)
+        response_data = response.json()
+        response_data['data'].pop("sidebar")
+        response_data['data'].pop("layout")
+        response_data['data']["profile"].pop("themeChoose")
         return response_data['data']

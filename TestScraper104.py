@@ -48,8 +48,21 @@ class TestScraper104:
         # Save results to Excel
         PersistenceExcel.save(job_list, "search_job_list")
 
+    @staticmethod
+    def test_search_profile_save_to_excel():
+        # Scrape
+        profile_id_list = Scraper104.scrape_listing("searchProfile", "遊戲企劃")
+        profile_list = []
+        for profile_id in profile_id_list:
+            profile = Scraper104.scrape_one_profile(profile_id)
+            profile_list.append(profile)
+
+        # Save results to Excel
+        PersistenceExcel.save(profile_list, "search_profile_list")
+
 
 if __name__ == "__main__":
-    TestScraper104.test_similar_job_save_to_excel()
-    TestScraper104.test_applied_job_save_to_excel()
-    TestScraper104.test_search_job_save_to_excel()
+    # TestScraper104.test_similar_job_save_to_excel()
+    # TestScraper104.test_applied_job_save_to_excel()
+    # TestScraper104.test_search_job_save_to_excel()
+    TestScraper104.test_search_profile_save_to_excel()
